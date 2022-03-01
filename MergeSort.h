@@ -3,7 +3,7 @@
 #include <cmath>
 
 // set to powers of 2
-constexpr auto NO_OF_THREADS = 4;
+constexpr auto NO_OF_THREADS = 8;
 
 class MergeSort
 {

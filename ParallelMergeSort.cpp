@@ -8,7 +8,7 @@ using namespace std;
 int main() {
 
 	MergeSort m;
-	const uint64_t size = ((32 * 1024 * 1024) / NO_OF_THREADS) * NO_OF_THREADS;
+	const uint64_t size = ((64 * 1024 * 1024) / NO_OF_THREADS) * NO_OF_THREADS;
 
 	auto seqData = m.createRandomData(size);
 	vector<int> parData(seqData);
