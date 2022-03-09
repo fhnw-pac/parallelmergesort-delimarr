@@ -43,9 +43,32 @@ void MergeSort::seqMSort(std::vector<int>& a)
 
 void MergeSort::parMSort(std::vector<int>& a)
 {
-	assert(a.size() % NO_OF_THREADS == 0);
-	
-	// TODO implement parallel merge sort
+	int size = a.size();
+	assert(size % NO_OF_THREADS == 0);
+	thread threads[NO_OF_THREADS];
+	//sort slices of the data, threaded
+	for (uint64_t i = 0; i < NO_OF_THREADS; i++) {
+		//make use of lambda expression to pass a by refrence
+		threads[i] = thread([&a, i, size] { mSort(a, size / NO_OF_THREADS * i, size / NO_OF_THREADS * (i + 1)); });
+	}
+	for (int i = 0; i < NO_OF_THREADS; i++) {
+		threads[i].join();
+	}
+	//merge the slices together to one, make use of already existing threads
+	for (int slices = NO_OF_THREADS; slices > 1; slices = slices / 2) {
+		for (uint64_t i = 0; i < slices; i=i+2) {
+			threads[i] = thread([&a, slices, i, size] {mMerge(a, i * size / slices, size / slices * (i + 1), size / slices * (i + 2)); });
+		}
+		for (int i = 0; i < slices; i=i+2) {
+			threads[i].join();
+		}
+	}
+	// sequentiel merging, was slower in testing
+	//for (int slices = NO_OF_THREADS; slices > 1; slices = slices / 2) {
+	//	for (uint64_t i = 0; i < slices; i=i+2) {
+	//		mMerge(a, i * a.size() / slices, a.size() / slices * (i + 1), a.size() / slices * (i + 2));
+	//	}
+	//}
 }
 
 double MergeSort::meassuredSort(std::vector<int>& a, void(MergeSort::*sortFunc)(std::vector<int>& a))
